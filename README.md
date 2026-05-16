@@ -63,6 +63,4 @@ Cada partida permite usar una vez cada comodin:
 - `ui`: interfaz grafica Swing.
 - `db`: conexion e inicializacion de SQLite.
 
-## Entrega
 
-Para entregar el trabajo final, sube este proyecto a GitHub y comparte el link del repositorio.
