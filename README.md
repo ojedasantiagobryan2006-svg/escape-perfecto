@@ -1,6 +1,6 @@
 # Escape Perfecto
 
-Juego de escritorio hecho en Java Swing para NetBeans, con base de datos SQLite y patron repositorio.
+Juego de escritorio hecho en Java Swing para NetBeans, con base de datos MySQL y patron repositorio.
 
 ## Idea del juego
 
@@ -10,7 +10,7 @@ Un jugador responde preguntas para ganar segundos. Con esos segundos, el equipo 
 
 - Java 17
 - Java Swing
-- SQLite
+- MySQL
 - Maven
 - Patron Repository
 
@@ -24,7 +24,20 @@ Un jugador responde preguntas para ganar segundos. Con esos segundos, el equipo 
 La interfaz principal esta en `src/main/java/com/escaperfecto/ui/GameFrame.java`.
 NetBeans tambien puede abrir `GameFrame.form` para editar los componentes desde la pestana `Design`.
 
-La base de datos `escape_perfecto.db` se crea automaticamente en la carpeta del proyecto la primera vez que se ejecuta.
+La base de datos MySQL `escape_perfecto` se crea automaticamente la primera vez que se ejecuta, siempre que el servidor MySQL este encendido.
+
+Por defecto usa:
+
+- Usuario: `root`
+- Password: vacio
+- Servidor: `localhost:3306`
+
+Si tu MySQL tiene otra configuracion, puedes usar variables de entorno:
+
+- `DB_USER`
+- `DB_PASSWORD`
+- `DB_HOST_URL`
+- `DB_NAME`
 
 ## Como jugar
 
@@ -61,6 +74,6 @@ Cada partida permite usar una vez cada comodin:
 - `repository`: contratos y repositorios JDBC.
 - `service`: logica principal de la partida.
 - `ui`: interfaz grafica Swing.
-- `db`: conexion e inicializacion de SQLite.
+- `db`: conexion e inicializacion de MySQL.
 
 

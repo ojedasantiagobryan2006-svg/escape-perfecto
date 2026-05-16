@@ -25,7 +25,7 @@ public class JdbcPrizeRepository implements PrizeRepository {
                         resultSet.getString("nombre"),
                         resultSet.getInt("valor"),
                         resultSet.getInt("segundos_para_tomar"),
-                        resultSet.getInt("escape_seguro") == 1
+                        resultSet.getBoolean("escape_seguro")
                 ));
             }
             return prizes;
@@ -34,4 +34,3 @@ public class JdbcPrizeRepository implements PrizeRepository {
         }
     }
 }
-

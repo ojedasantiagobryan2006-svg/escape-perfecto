@@ -24,7 +24,7 @@ public class JdbcGameRepository implements GameRepository {
             statement.setString(1, result.getQuestionPlayer());
             statement.setString(2, result.getCagePlayer());
             statement.setInt(3, result.getTotalPrize());
-            statement.setInt(4, result.isEscaped() ? 1 : 0);
+            statement.setBoolean(4, result.isEscaped());
             statement.setString(5, result.getDate().toString());
             statement.executeUpdate();
         } catch (SQLException exception) {
@@ -50,7 +50,7 @@ public class JdbcGameRepository implements GameRepository {
                         resultSet.getString("jugador_preguntas"),
                         resultSet.getString("jugador_jaula"),
                         resultSet.getInt("premio_total"),
-                        resultSet.getInt("escapo") == 1,
+                        resultSet.getBoolean("escapo"),
                         LocalDateTime.parse(resultSet.getString("fecha"))
                 ));
             }
@@ -60,4 +60,3 @@ public class JdbcGameRepository implements GameRepository {
         }
     }
 }
-

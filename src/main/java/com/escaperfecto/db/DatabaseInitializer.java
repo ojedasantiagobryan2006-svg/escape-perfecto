@@ -7,40 +7,41 @@ import java.sql.Statement;
 
 public class DatabaseInitializer {
     public void initialize() {
+        createDatabaseIfMissing();
+
         try (Connection connection = Database.getConnection();
              Statement statement = connection.createStatement()) {
             statement.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS preguntas (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        categoria TEXT NOT NULL DEFAULT 'General',
-                        texto TEXT NOT NULL,
-                        opcion_a TEXT NOT NULL,
-                        opcion_b TEXT NOT NULL,
-                        opcion_c TEXT NOT NULL,
-                        respuesta_correcta TEXT NOT NULL,
-                        segundos INTEGER NOT NULL
+                        id INT PRIMARY KEY AUTO_INCREMENT,
+                        categoria VARCHAR(80) NOT NULL DEFAULT 'General',
+                        texto VARCHAR(255) NOT NULL,
+                        opcion_a VARCHAR(160) NOT NULL,
+                        opcion_b VARCHAR(160) NOT NULL,
+                        opcion_c VARCHAR(160) NOT NULL,
+                        respuesta_correcta CHAR(1) NOT NULL,
+                        segundos INT NOT NULL
                     )
                     """);
-            addCategoryColumnIfMissing(statement);
 
             statement.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS premios (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        nombre TEXT NOT NULL,
-                        valor INTEGER NOT NULL,
-                        segundos_para_tomar INTEGER NOT NULL,
-                        escape_seguro INTEGER NOT NULL DEFAULT 0
+                        id INT PRIMARY KEY AUTO_INCREMENT,
+                        nombre VARCHAR(120) NOT NULL,
+                        valor INT NOT NULL,
+                        segundos_para_tomar INT NOT NULL,
+                        escape_seguro BOOLEAN NOT NULL DEFAULT FALSE
                     )
                     """);
 
             statement.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS partidas (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        jugador_preguntas TEXT NOT NULL,
-                        jugador_jaula TEXT NOT NULL,
-                        premio_total INTEGER NOT NULL,
-                        escapo INTEGER NOT NULL,
-                        fecha TEXT NOT NULL
+                        id INT PRIMARY KEY AUTO_INCREMENT,
+                        jugador_preguntas VARCHAR(100) NOT NULL,
+                        jugador_jaula VARCHAR(100) NOT NULL,
+                        premio_total INT NOT NULL,
+                        escapo BOOLEAN NOT NULL,
+                        fecha VARCHAR(40) NOT NULL
                     )
                     """);
 
@@ -51,13 +52,12 @@ public class DatabaseInitializer {
         }
     }
 
-    private void addCategoryColumnIfMissing(Statement statement) throws SQLException {
-        try {
-            statement.executeUpdate("ALTER TABLE preguntas ADD COLUMN categoria TEXT NOT NULL DEFAULT 'General'");
+    private void createDatabaseIfMissing() {
+        try (Connection connection = Database.getServerConnection();
+             Statement statement = connection.createStatement()) {
+            statement.executeUpdate("CREATE DATABASE IF NOT EXISTS " + Database.getDatabaseName());
         } catch (SQLException exception) {
-            if (!exception.getMessage().toLowerCase().contains("duplicate column")) {
-                throw exception;
-            }
+            throw new IllegalStateException("No se pudo crear la base de datos MySQL.", exception);
         }
     }
 
