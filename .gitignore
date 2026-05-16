@@ -1,0 +1,7 @@
+target/
+escape_perfecto.db
+*.class
+*.log
+.idea/
+nbproject/private/
+
