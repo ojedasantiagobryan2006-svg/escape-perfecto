@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.util.List;
 import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
@@ -21,6 +22,9 @@ public class GameFrame extends javax.swing.JFrame {
     private static final Color OPTION_BACKGROUND = new Color(238, 238, 238);
     private boolean gameStarted;
     private boolean gameFinished;
+    private boolean changeSectionUsed;
+    private boolean removeOptionUsed;
+    private boolean changeQuestionUsed;
 
     public GameFrame(GameService gameService) {
         this.gameService = gameService;
@@ -40,11 +44,13 @@ public class GameFrame extends javax.swing.JFrame {
         optionsPanel.setBackground(DARK_BACKGROUND);
         actionsPanel.setBackground(DARK_BACKGROUND);
         prizeActionsPanel.setBackground(DARK_BACKGROUND);
+        wildcardPanel.setBackground(DARK_BACKGROUND);
         paintLabel(questionPlayerLabel);
         paintLabel(cagePlayerLabel);
         paintLabel(databaseLabel);
         paintLabel(prizeTitleLabel);
         paintLabel(categoryLabel);
+        paintLabel(wildcardTitleLabel);
         timerLabel.setFont(timerLabel.getFont().deriveFont(Font.BOLD, 18f));
         totalLabel.setFont(totalLabel.getFont().deriveFont(Font.BOLD, 18f));
         paintLabel(timerLabel);
@@ -113,6 +119,11 @@ public class GameFrame extends javax.swing.JFrame {
         prizeActionsPanel = new javax.swing.JPanel();
         takePrizeButton = new javax.swing.JButton();
         trappedButton = new javax.swing.JButton();
+        wildcardPanel = new javax.swing.JPanel();
+        wildcardTitleLabel = new javax.swing.JLabel();
+        changeSectionButton = new javax.swing.JButton();
+        removeOptionButton = new javax.swing.JButton();
+        changeQuestionButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Escape Perfecto");
@@ -234,6 +245,26 @@ public class GameFrame extends javax.swing.JFrame {
 
         mainPanel.add(prizePanel, java.awt.BorderLayout.EAST);
 
+        wildcardPanel.setBackground(DARK_BACKGROUND);
+        wildcardPanel.setLayout(new java.awt.GridLayout(1, 4, 8, 8));
+
+        wildcardTitleLabel.setText("Comodines:");
+        wildcardPanel.add(wildcardTitleLabel);
+
+        changeSectionButton.setText("Cambiar seccion");
+        changeSectionButton.addActionListener(evt -> changeSectionButtonActionPerformed(evt));
+        wildcardPanel.add(changeSectionButton);
+
+        removeOptionButton.setText("Eliminar opcion");
+        removeOptionButton.addActionListener(evt -> removeOptionButtonActionPerformed(evt));
+        wildcardPanel.add(removeOptionButton);
+
+        changeQuestionButton.setText("Cambiar pregunta");
+        changeQuestionButton.addActionListener(evt -> changeQuestionButtonActionPerformed(evt));
+        wildcardPanel.add(changeQuestionButton);
+
+        mainPanel.add(wildcardPanel, java.awt.BorderLayout.SOUTH);
+
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
         pack();
@@ -259,6 +290,18 @@ public class GameFrame extends javax.swing.JFrame {
         finishGame(false);
     }
 
+    private void changeSectionButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        changeSectionWildcard();
+    }
+
+    private void removeOptionButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        removeOptionWildcard();
+    }
+
+    private void changeQuestionButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        changeQuestionWildcard();
+    }
+
     private void startGame() {
         String questionPlayer = questionPlayerField.getText().trim();
         String cagePlayer = cagePlayerField.getText().trim();
@@ -271,6 +314,7 @@ public class GameFrame extends javax.swing.JFrame {
         gameService.startGame(questionPlayer, cagePlayer, category);
         gameStarted = true;
         gameFinished = false;
+        resetWildcards();
         loadPrizes();
         showCurrentQuestion();
         refreshScore();
@@ -344,9 +388,104 @@ public class GameFrame extends javax.swing.JFrame {
         return true;
     }
 
+    private void resetWildcards() {
+        changeSectionUsed = false;
+        removeOptionUsed = false;
+        changeQuestionUsed = false;
+        changeSectionButton.setEnabled(true);
+        removeOptionButton.setEnabled(true);
+        changeQuestionButton.setEnabled(true);
+    }
+
+    private void changeSectionWildcard() {
+        if (!canPlay()) {
+            return;
+        }
+        if (changeSectionUsed) {
+            JOptionPane.showMessageDialog(this, "Ya usaste el comodin de cambio de seccion.");
+            return;
+        }
+
+        JComboBox<String> comboBox = new JComboBox<>();
+        for (String category : gameService.getCategories()) {
+            if (!category.equals(String.valueOf(categoryComboBox.getSelectedItem()))) {
+                comboBox.addItem(category);
+            }
+        }
+
+        int option = JOptionPane.showConfirmDialog(
+                this,
+                comboBox,
+                "Elige la nueva seccion",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+        if (option != JOptionPane.OK_OPTION || comboBox.getSelectedItem() == null) {
+            return;
+        }
+
+        String newCategory = String.valueOf(comboBox.getSelectedItem());
+        categoryComboBox.setSelectedItem(newCategory);
+        gameService.changeCategory(newCategory);
+        changeSectionUsed = true;
+        changeSectionButton.setEnabled(false);
+        showCurrentQuestion();
+    }
+
+    private void removeOptionWildcard() {
+        if (!canPlay()) {
+            return;
+        }
+        if (removeOptionUsed) {
+            JOptionPane.showMessageDialog(this, "Ya usaste el comodin de eliminar opcion.");
+            return;
+        }
+
+        Question question = gameService.getCurrentQuestion();
+        if (question == null) {
+            JOptionPane.showMessageDialog(this, "No hay pregunta activa.");
+            return;
+        }
+
+        if (!question.getCorrectAnswer().equals("A")) {
+            disableOption(optionA);
+        } else if (!question.getCorrectAnswer().equals("B")) {
+            disableOption(optionB);
+        } else {
+            disableOption(optionC);
+        }
+
+        answerGroup.clearSelection();
+        removeOptionUsed = true;
+        removeOptionButton.setEnabled(false);
+    }
+
+    private void disableOption(javax.swing.JRadioButton option) {
+        option.setEnabled(false);
+        option.setText("Opcion eliminada");
+    }
+
+    private void changeQuestionWildcard() {
+        if (!canPlay()) {
+            return;
+        }
+        if (changeQuestionUsed) {
+            JOptionPane.showMessageDialog(this, "Ya usaste el comodin de cambio de pregunta.");
+            return;
+        }
+
+        gameService.changeQuestion();
+        changeQuestionUsed = true;
+        changeQuestionButton.setEnabled(false);
+        showCurrentQuestion();
+    }
+
     private void showCurrentQuestion() {
         Question question = gameService.getCurrentQuestion();
         answerGroup.clearSelection();
+        optionA.setEnabled(true);
+        optionB.setEnabled(true);
+        optionC.setEnabled(true);
         if (question == null) {
             questionArea.setText("Ya no hay mas preguntas. Usen el tiempo ganado para tomar premios o salir.");
             optionA.setText("");
@@ -409,6 +548,8 @@ public class GameFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> categoryComboBox;
     private javax.swing.JLabel categoryLabel;
     private javax.swing.JPanel centerPanel;
+    private javax.swing.JButton changeQuestionButton;
+    private javax.swing.JButton changeSectionButton;
     private javax.swing.JLabel databaseLabel;
     private javax.swing.JButton escapeButton;
     private javax.swing.JPanel headerPanel;
@@ -433,5 +574,8 @@ public class GameFrame extends javax.swing.JFrame {
     private javax.swing.JLabel timerLabel;
     private javax.swing.JLabel totalLabel;
     private javax.swing.JButton trappedButton;
+    private javax.swing.JButton removeOptionButton;
+    private javax.swing.JPanel wildcardPanel;
+    private javax.swing.JLabel wildcardTitleLabel;
     // End of variables declaration//GEN-END:variables
 }

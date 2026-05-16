@@ -316,6 +316,55 @@
             </Container>
           </SubComponents>
         </Container>
+        <Container class="javax.swing.JPanel" name="wildcardPanel">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="2d" green="2d" red="2d" type="rgb"/>
+            </Property>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+              <BorderConstraints direction="South"/>
+            </Constraint>
+          </Constraints>
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+            <Property name="rows" type="int" value="1"/>
+            <Property name="columns" type="int" value="4"/>
+            <Property name="horizontalGap" type="int" value="8"/>
+            <Property name="verticalGap" type="int" value="8"/>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="wildcardTitleLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Comodines:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="changeSectionButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Cambiar seccion"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="changeSectionButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="removeOptionButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Eliminar opcion"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeOptionButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="changeQuestionButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Cambiar pregunta"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="changeQuestionButtonActionPerformed"/>
+              </Events>
+            </Component>
+          </SubComponents>
+        </Container>
       </SubComponents>
     </Container>
   </SubComponents>

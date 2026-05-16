@@ -62,6 +62,25 @@ public class GameService {
         return questions.get(questionIndex);
     }
 
+    public Question changeQuestion() {
+        if (questionIndex < questions.size()) {
+            questionIndex++;
+        }
+        return getCurrentQuestion();
+    }
+
+    public Question changeCategory(String category) {
+        if (category == null || category.equals("Todas")) {
+            this.questions = new ArrayList<>(allQuestions);
+        } else {
+            this.questions = allQuestions.stream()
+                    .filter(question -> question.getCategory().equals(category))
+                    .toList();
+        }
+        this.questionIndex = 0;
+        return getCurrentQuestion();
+    }
+
     public boolean answerCurrentQuestion(String answer) {
         Question current = getCurrentQuestion();
         if (current == null) {

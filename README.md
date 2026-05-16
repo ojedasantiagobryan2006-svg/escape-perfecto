@@ -47,6 +47,14 @@ La base de datos `escape_perfecto.db` se crea automaticamente en la carpeta del 
 
 El juego incluye 30 preguntas de cultura general y 14 premios disponibles en la jaula.
 
+## Comodines
+
+Cada partida permite usar una vez cada comodin:
+
+- `Cambiar seccion`: permite elegir otra seccion y cargar una pregunta nueva.
+- `Eliminar opcion`: oculta una respuesta incorrecta de la pregunta actual.
+- `Cambiar pregunta`: salta la pregunta actual y muestra la siguiente.
+
 ## Estructura
 
 - `model`: clases del dominio del juego.
