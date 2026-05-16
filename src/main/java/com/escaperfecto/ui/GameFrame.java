@@ -252,8 +252,8 @@ public class GameFrame extends javax.swing.JFrame {
             return;
         }
 
-        Prize selectedPrize = prizeList.getSelectedValue();
-        if (selectedPrize == null) {
+        Object selectedValue = prizeList.getSelectedValue();
+        if (!(selectedValue instanceof Prize selectedPrize)) {
             JOptionPane.showMessageDialog(this, "Selecciona un premio.");
             return;
         }
