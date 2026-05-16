@@ -39,8 +39,3 @@ La base de datos `escape_perfecto.db` se crea automáticamente en la carpeta del
 - `service`: lógica principal de la partida.
 - `ui`: interfaz gráfica Swing.
 - `db`: conexión e inicialización de SQLite.
-
-## Entrega
-
-Para entregar el trabajo final, sube este proyecto a GitHub y comparte el link del repositorio.
-
